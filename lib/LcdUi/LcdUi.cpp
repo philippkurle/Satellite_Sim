@@ -129,7 +129,7 @@ void LcdUi::renderPage0(const UiModel& m) {
     // Mode + Pv
     char buf[17];
 
-    // PV z.B. "PV: 12.34"
+    // PV eg. "PV: 12.34"
     int16_t cv = m.centi_v;
     int16_t whole = cv / 100;
     int16_t frac = cv % 100;
@@ -159,39 +159,43 @@ void LcdUi::renderPage2(const UiModel& m) {
     snprintf(line0, sizeof(line0), "Security");
     printPadded(0,0, line0);
     
-    switch (m.sec) {
-        case SecurityUiState::WAIT_RFID:
-            printPadded(0, 1, "Rfid: waiting...");
-            break;
-        case SecurityUiState::WAIT_CODE: {
-            char masked[9];
-            uint8_t n = m.pin_len;
+    if (m.mode == Mode::NOMINAL) { // to be tested
+        switch (m.sec) {
+            case SecurityUiState::WAIT_RFID:
+                printPadded(0, 1, "Rfid: waiting...");
+                break;
+            case SecurityUiState::WAIT_CODE: {
+                char masked[9];
+                uint8_t n = m.pin_len;
 
-            if (n > 8) {
-                n = 8;
-            }
-            for (uint8_t i = 0; i < n; i++) {
-                masked[i] = '*';
-            }
-            if (n > 0) {
-                masked[n - 1] = m.pin_text[n - 1];
-            }
-            masked[n] = '\0';
+                if (n > 8) {
+                    n = 8;
+                }
+                for (uint8_t i = 0; i < n; i++) {
+                    masked[i] = '*';
+                }
+                if (n > 0) {
+                    masked[n - 1] = m.pin_text[n - 1];
+                }
+                masked[n] = '\0';
 
-            snprintf(line1, sizeof(line1), "PIN: %s", masked);
-            printPadded(0, 1, line1);
-            break;
-        }
-        case SecurityUiState::LOCKOUT:
-            printPadded(0, 1, "LOCKOUT");
-            break;
-        case SecurityUiState::AUTH_OK:
-            printPadded(0, 1, "Auth OK");
-            break;
-        default:
-            printPadded(0, 1, "SEC: ?");
-            break;
-    };
+                snprintf(line1, sizeof(line1), "PIN: %s", masked);
+                printPadded(0, 1, line1);
+                break;
+            }
+            case SecurityUiState::LOCKOUT:
+                printPadded(0, 1, "LOCKOUT");
+                break;
+            case SecurityUiState::AUTH_OK:
+                printPadded(0, 1, "Auth OK");
+                break;
+            default:
+                printPadded(0, 1, "SEC: ?");
+                break;
+        };
+    } else {
+        printPadded(0, 1, "LOCKDOWN");
+    }
 }
 
 
