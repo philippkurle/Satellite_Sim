@@ -6,7 +6,7 @@
 class KeypadMatrix {
     public:
 
-        explicit KeypadMatrix(const cfg::KeypadConfig& cfg = cfg::KEYPAD_CONFIG);
+        explicit KeypadMatrix(const cfg::KeypadConfig& cfg = cfg::KEYPAD_CONFIG); // cdf::KEYPAD_CONFIG -> default value
 
         void begin();
 
@@ -20,7 +20,7 @@ class KeypadMatrix {
         uint32_t _next_step_ms = 0;
         uint8_t _active_col = 0;
 
-        // Debounce Arrays
+        // debounce Arrays (ignore false presses caused by electrical noise)
         bool _raw[cfg::KEYPAD_ROWS][cfg::KEYPAD_COLS] {}; // {} initialisiert mit: bool -> false und uint32_t -> 0 
         bool _stable[cfg::KEYPAD_ROWS][cfg::KEYPAD_COLS] {};
         uint32_t _changed_at[cfg::KEYPAD_ROWS][cfg::KEYPAD_COLS]{};

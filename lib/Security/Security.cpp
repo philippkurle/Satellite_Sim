@@ -2,7 +2,7 @@
 #include <string.h>
 #include <Arduino.h>
 
-Security::Security(const cfg::SecurityConfig& _cfg) : _cfg(_cfg) {} //assigns the parameter _cfg to the class member _cfg
+Security::Security(const cfg::SecurityConfig& _cfg) : _cfg(_cfg) {} // assigns the parameter _cfg to the class member _cfg
 
 void Security::begin() {
     reset(0);
@@ -15,6 +15,7 @@ void Security::update(uint32_t now_ms) {
             return;
         }
     }
+
     if (_state == SecurityState::WAIT_CODE) {
         if (_code_deadline_ms != 0 && timeReached(now_ms, _code_deadline_ms) == true) {
             toWaitRfid(now_ms);
@@ -31,9 +32,11 @@ void Security::onRfidUid(const uint8_t* uid, uint8_t len, uint32_t now_ms) {
     if (_state == SecurityState::LOCKOUT) { // ignore the scan
         return;
     }
+
     if (_state != SecurityState::WAIT_RFID) { // ignore if not WAIT_RFID
         return;
     }
+    
     if (isRfidAllowed(uid, len) == true) { // if card allowed wait for code
         toWaitCode(now_ms);
     }
@@ -43,15 +46,18 @@ void Security::onKey(char key, uint32_t now_ms) {
     if (_state == SecurityState::LOCKOUT) {
         return;
     }
+
     if (_state != SecurityState::WAIT_CODE) {
         return;
     }
+
     _interkey_deadline_ms = now_ms + _cfg.interkey_timeout_ms;
 
     if (key == '*') {
         clearEntered();
         return;
     }
+
     if (key == '#') {
         if (_entered_len == 0) {
             return;
@@ -69,6 +75,7 @@ void Security::onKey(char key, uint32_t now_ms) {
         }
         return;
     }
+
     if (key < '0' || key > '9') {
         return;
     }
@@ -105,10 +112,12 @@ void Security::copyEntered(char* out, uint8_t out_sz) const {
   if (out_sz == 0) {
     return;
   }
+
   uint8_t n = _entered_len;
   if (n > out_sz - 1) {
     n = out_sz - 1;
   }
+  
   memcpy(out, _entered, n);
   out[n] = '\0';
 }

@@ -57,10 +57,12 @@ uint16_t Sensors::readAnalogAveraged(uint8_t pin, uint8_t samples) {
     if (samples == 0) {
         return 0;
     }
+
     uint32_t sum = 0;
     for (uint8_t i = 0; i < samples; i++) {
         sum += analogRead(pin);
     }
+    
     uint32_t avg = (sum + (samples / 2u)) / samples; // rounding to nearest integer
     return static_cast <uint16_t> (avg); // static_cast<type>(expression) -> converts avg to uint16_t via static_cast (explicit and safe for numeric conversions)
 }                                                

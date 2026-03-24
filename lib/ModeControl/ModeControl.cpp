@@ -12,6 +12,7 @@ void ModeControl::update(uint32_t now_ms, const SensorData& s) {
     if ((int32_t)(now_ms - _next_ms) < 0) {
         return;
     }
+    
     _next_ms = now_ms + modes::MODECTRL_PERIOD_MS;
 
     switch (_mode) {
@@ -58,6 +59,7 @@ void ModeControl::setMode(Mode m) {
     if (m == _mode) {
         return;
     }
+
     _prev_mode = _mode;
     _mode = m;
     _mode_changed = true;

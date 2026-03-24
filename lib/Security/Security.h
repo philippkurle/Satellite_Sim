@@ -28,7 +28,7 @@ class Security {
         // Event
         bool consumeAuthSuccessEvent();
 
-        // dispaly state for ui
+        // display state for ui
         SecurityState state() const {
             return _state;
         }
@@ -57,13 +57,13 @@ class Security {
 
         bool _auth_success_event = false;
 
-        // Timing
+        // timing
         uint32_t _code_deadline_ms = 0;
         uint32_t _interkey_deadline_ms = 0;
         uint32_t _lockout_until_ms = 0;
 
         static constexpr uint8_t kBufMax = 16;
-        char _entered[kBufMax] {}; // Array
+        char _entered[kBufMax] {}; // array
         uint8_t _entered_len = 0;
 
         uint8_t _attempts_used = 0;

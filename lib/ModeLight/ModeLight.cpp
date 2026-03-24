@@ -26,7 +26,7 @@ void ModeLight::setMode(Mode m) {
 }
 
 void ModeLight::write(bool r, bool y, bool g) {
-    digitalWrite(pins::PIN_LED_R, r ? HIGH : LOW); // Bedingung ? Wert_wenn_true : Wert_wenn_false
+    digitalWrite(pins::PIN_LED_R, r ? HIGH : LOW); // condition ? if_true : if_false
     digitalWrite(pins::PIN_LED_Y, y ? HIGH : LOW);
     digitalWrite(pins::PIN_LED_G, g ? HIGH : LOW);
 }

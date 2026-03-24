@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "types.h"
 
-struct UiModel {
+struct UiModel { // displayed on lcd
     Mode mode;
     int16_t centi_v;
 
@@ -23,7 +23,7 @@ class LcdUi {
         void begin();
 
         void update(uint32_t now_ms, const UiModel& m);
-
+           
         void notifyAuthSuccess(uint32_t now_ms);
 
         void notifyRfidAccepted(uint32_t now_ms);
@@ -42,9 +42,9 @@ class LcdUi {
         bool _force_security = false;
         uint32_t _force_until_ms = 0; 
 
-        void renderPage0(const UiModel& m); // Mode + Pv
+        void renderPage0(const UiModel& m); // mode + pv
 
-        void renderPage1(const UiModel& m); // Leak
+        void renderPage1(const UiModel& m); // leak
         
-        void renderPage2(const UiModel& m); // Security
+        void renderPage2(const UiModel& m); // security
 };

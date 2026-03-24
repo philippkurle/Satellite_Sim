@@ -14,9 +14,11 @@ void BuzzerBeacon::update(uint32_t now_ms) {
     if (_enabled == false) {
         return;
     }
+
     if ((int32_t)(now_ms - _next_ms) < 0) {
         return;
     }
+
     switch (_state) {
         case State::ON1:
             setState(State::OFF1, now_ms, ui::buzzer::OFF1_MS);
@@ -43,6 +45,7 @@ void BuzzerBeacon::setEnabled(bool enabled) {
     if (enabled == _enabled) {
         return;
     }
+    
     _enabled = enabled;
 
     if (_enabled == false) {

@@ -8,7 +8,7 @@ class ModeControl {
 
         void begin();
 
-        void update(uint32_t now_ms, const SensorData& s);
+        void update(uint32_t now_ms, const SensorData& s); // passes on SensorData struct content for decision making; reference instead of copy for efficiency
 
         Mode getMode() const {
             return _mode;

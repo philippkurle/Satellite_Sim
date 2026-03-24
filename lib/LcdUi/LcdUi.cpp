@@ -1,11 +1,13 @@
 #include "LcdUi.h"
-#include <Wire.h> // Standardbibliothek für I²C-Kommunikation
-#include <LiquidCrystal_I2C.h> // Spezialbibliothek für I²C-Display-Steuerung, basiert auf <Wire.h>
+#include <Wire.h> // library for I²C-communication
+#include <LiquidCrystal_I2C.h> // library for I²C-display, based on <Wire.h>
 #include "config_ui.h"
 #include <Arduino.h>
 
-static LiquidCrystal_I2C lcd(ui::LCD_ADDR, 16, 2);
+static LiquidCrystal_I2C lcd(ui::LCD_ADDR, 16, 2); // static -> created once at program start (for entire runtime)
+// creates static instance of I2C lcd object called lcd
 
+// takes a C-style string
 static void printPadded(uint8_t col, uint8_t row, const char* s) {
     const uint8_t lcd_cols = 16;
 
@@ -18,17 +20,19 @@ static void printPadded(uint8_t col, uint8_t row, const char* s) {
 
     uint8_t i = 0;
     if (s != nullptr) {
-        for (; i < room && s[i] != '\0'; i++) { // ; greift auf vorher definiertes i zu
+        for (; i < room && s[i] != '\0'; i++) { // ; -> uses predefined i
             lcd.write((uint8_t)s[i]);
         }
     }
+
     for (; i < room; i++) {
         lcd.write((uint8_t)' ');
     }
 }
 
+// takes an Arduino string object
 static void printPadded(uint8_t col, uint8_t row, const String& s) {
-    printPadded(col, row, s.c_str());
+    printPadded(col, row, s.c_str()); // delegates to other function
 }
 
 static const char* modeStr(Mode m) {
@@ -46,11 +50,13 @@ static const char* modeStr(Mode m) {
 
 void LcdUi::begin() {
     Wire.begin();
-    Wire.setClock(400000); // 400kHz statt oft 100kHz
+    Wire.setClock(400000); // 400kHz instead of 100kHz
     lcd.init();
     lcd.backlight();
+
     printPadded(0, 0, String("Booting"));
     printPadded(0, 1, String("UI init"));
+
     _next_ms = 0;
     _next_page_ms = 0;
 }
@@ -58,7 +64,7 @@ void LcdUi::begin() {
 void LcdUi::update(uint32_t now_ms, const UiModel& m) {
     const bool forced_active = _force_security && ((int32_t)(now_ms - _force_until_ms) < 0);
 
-    if (forced_active == false) {
+    if (forced_active == false) { // for normal page rotation
         if ((int32_t)(now_ms - _next_page_ms) >= 0) {
             _page = (_page + 1) % 3;
             _next_page_ms =  now_ms + ui::LCD_PAGE_ROTATE_MS;
@@ -81,6 +87,7 @@ void LcdUi::update(uint32_t now_ms, const UiModel& m) {
     if ((int32_t)(now_ms - _next_ms) < 0) {
         return;
     }
+
     _next_ms = now_ms + LCD_RENDER_PERIOD_MS;
 
     if (_show_auth_ok == true) {
@@ -88,6 +95,7 @@ void LcdUi::update(uint32_t now_ms, const UiModel& m) {
         printPadded(0, 1, String("Welcome"));
         return;
     }
+    
     switch (_page) {
         case 0:
             renderPage0(m);
@@ -107,7 +115,7 @@ void LcdUi::update(uint32_t now_ms, const UiModel& m) {
 void LcdUi::notifyAuthSuccess(uint32_t now_ms) {
     _show_auth_ok = true;
     _auth_ok_until_ms = now_ms + 1000;
-    _next_ms = now_ms; // sofortiges LCD update
+    _next_ms = now_ms; // forces lcd update
 }
 
 void LcdUi::notifyRfidAccepted(uint32_t now_ms) {
@@ -126,15 +134,15 @@ void LcdUi::notifyKeyActivity(uint32_t now_ms) {
 }
 
 void LcdUi::renderPage0(const UiModel& m) {
-    // Mode + Pv
-    char buf[17];
+    // mode + pv
+    char buf[17]; // simple logic -> one buffer -> is overwriten after printing the first line
 
-    // PV eg. "PV: 12.34"
+    // pv eg. "PV: 12.34"
     int16_t cv = m.centi_v;
     int16_t whole = cv / 100;
     int16_t frac = cv % 100;
 
-    snprintf(buf, sizeof(buf), "MODE:%-7s", modeStr(m.mode));
+    snprintf(buf, sizeof(buf), "MODE:%-7s", modeStr(m.mode)); // snprintf for formating and writing string into buffer with specified max size
     printPadded(0, 0, buf);
 
     snprintf(buf, sizeof(buf), "PV: %2d.%02d", whole, frac);
@@ -142,7 +150,7 @@ void LcdUi::renderPage0(const UiModel& m) {
 }
 
 void LcdUi::renderPage1(const UiModel& m) {
-    // Leak Status
+    // leak status
     char line1[17];
     printPadded(0, 0, "Leak Status");
     
@@ -152,14 +160,14 @@ void LcdUi::renderPage1(const UiModel& m) {
 }
 
 void LcdUi::renderPage2(const UiModel& m) {
-    // Security
+    // security
     char line0[17];
     char line1[17];
 
     snprintf(line0, sizeof(line0), "Security");
     printPadded(0,0, line0);
     
-    if (m.mode == Mode::NOMINAL) { // to be tested
+    if (m.mode == Mode::NOMINAL) {
         switch (m.sec) {
             case SecurityUiState::WAIT_RFID:
                 printPadded(0, 1, "Rfid: waiting...");

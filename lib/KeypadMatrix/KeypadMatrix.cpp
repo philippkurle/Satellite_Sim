@@ -7,10 +7,12 @@ void KeypadMatrix::begin() {
     for (uint8_t r = 0; r < cfg::KEYPAD_ROWS; r++) {
         pinMode(cfg::KEYPAD_ROW_PINS[r], INPUT_PULLUP);
     }
+
     for (uint8_t c = 0; c < cfg::KEYPAD_COLS; c++) {
         pinMode(cfg::KEYPAD_COL_PINS[c], OUTPUT);
         digitalWrite(cfg::KEYPAD_COL_PINS[c], HIGH);
     }
+
     _active_col = 0;
     _next_step_ms = 0;
 }
@@ -19,12 +21,13 @@ void KeypadMatrix::update(uint32_t now_ms) {
     if (isTimeReached(now_ms, _next_step_ms) != true) {
         return;
     }
+
     _next_step_ms = now_ms + _cfg.scan_step_ms;
 
-    // eine Spalte pro Update scannen
+    // scan one column per update
     driveColLow(_active_col);
 
-    // Rows lesen
+    // read rows
     for (uint8_t r = 0; r < cfg::KEYPAD_ROWS; r++) {
         bool pressed = (digitalRead(cfg::KEYPAD_ROW_PINS[r]) == LOW);
         bool prev_raw = _raw[r][_active_col];
@@ -46,8 +49,10 @@ void KeypadMatrix::update(uint32_t now_ms) {
             }
         }
     }
-    // nächste Spalte
+    
+    // next column
     _active_col++;
+
     if (_active_col >= cfg::KEYPAD_COLS) {
         _active_col = 0;
     }
@@ -57,6 +62,7 @@ bool KeypadMatrix::consumeKey(char& out_key) {
     if (_key_pending == false) {
         return false;
     }
+    
     out_key = _key;
     _key_pending = false;
     return true;
@@ -69,6 +75,6 @@ void KeypadMatrix::driveAllColsHigh() {
 }
 
 void KeypadMatrix::driveColLow(uint8_t col) {
-    driveAllColsHigh(); // erst alles HIGH, dann eine LOW (reduziert Ghosting-Effekte)
+    driveAllColsHigh(); // all HIGH first, then one LOW (reduces ghosting)
     digitalWrite(cfg::KEYPAD_COL_PINS[col], LOW);
 }
