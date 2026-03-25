@@ -7,11 +7,11 @@ namespace cfg {
     constexpr uint8_t KEYPAD_ROWS = 4;
     constexpr uint8_t KEYPAD_COLS = 4;
 
-    // Zuordnung PINs --> Reihen & Spalten
+    // assignment PINs --> rows and columns
     inline constexpr uint8_t KEYPAD_ROW_PINS[KEYPAD_ROWS] = {29, 28, 27, 26};
     inline constexpr uint8_t KEYPAD_COL_PINS[KEYPAD_COLS] = {25, 24, 23, 22};
     
-    // Keymap
+    // keymap
     inline constexpr char KEYPAD_MAP[KEYPAD_ROWS][KEYPAD_COLS] = {
         {'1','2','3','A'},
         {'4','5','6','B'},
@@ -20,8 +20,8 @@ namespace cfg {
     };
 
     struct KeypadConfig {
-        uint16_t scan_step_ms; // pro Update eine Spalte scannen
-        uint16_t debounce_ms; // Entprellzeit
+        uint16_t scan_step_ms;
+        uint16_t debounce_ms;
     };
 
     inline constexpr KeypadConfig KEYPAD_CONFIG {

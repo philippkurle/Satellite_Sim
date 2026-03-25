@@ -15,11 +15,15 @@
 #include "Actuators.h"
 #include "UiFacade.h"
 
+/*
+compile time toggle for telemetry
+quick switch, saves memory and CPU
+*/
 #ifndef SATSIM_TELEMTRY
 #define SATSIM_TELEMETRY 1
 #endif
 
-static inline bool timeReached(uint32_t now, uint32_t t) {
+static inline bool timeReached(uint32_t now, uint32_t t) { // static: internal linkage (only visible in this .cpp)
   return (int32_t)(now - t) >= 0;
 }
 
@@ -49,6 +53,7 @@ static inline uint16_t telemetryPeriodFor(Mode m) {
   }
 }
 
+// __FlashStringHelper: special type used for Arduino, string pointer points to flash memory not RAM 
 static inline const __FlashStringHelper* modeName(Mode m) {
   switch (m) {
     case Mode::NOMINAL:
@@ -90,7 +95,7 @@ static Mode g_mode = Mode::NOMINAL;
 // ModeCtrl gate
 static uint32_t g_next_modectrl_ms = 0;
 
-// UI content gate (cache model wird nur periodisch aktualisiert)
+// UI content gate (cache model updates only periodically)
 static uint32_t g_next_ui_content_ms = 0;
 
 static UiModel g_ui_model_cache {
@@ -102,10 +107,14 @@ static UiModel g_ui_model_cache {
   .pin_len = 0
 };
 
-// Telemetry Gate
+// telemetry Gate
 static uint32_t g_next_telemetry_ms = 0;
 
-// Leak throttling latch + gating
+/* 
+leak throttling latch + gating
+prevent repeated alarms for same event
+if sets to true, stays until reset
+*/
 struct LeakLatched {
   bool water_suspect = false;
   bool water_confirm = false;
@@ -125,7 +134,7 @@ static void resetModeDependentSchedulers(uint32_t now_ms, Mode newMode) {
   g_next_ui_content_ms = now_ms;
   g_next_telemetry_ms = now_ms;
 
-  // Leak gating reset on mode changes
+  // leak gating reset on mode changes
   if (newMode == Mode::WARN) {
     g_warn_leak_on = true;
     g_warn_leak_next_toggle_ms = now_ms + modes::LEAK_DUTY_WARN_ON_MS;
@@ -138,8 +147,9 @@ static bool leakSamplingAllowed(uint32_t now_ms, Mode m) {
   if (m == Mode::NOMINAL) {
     return true;
   }
+  
   if (m == Mode::WARN) {
-    // Duty cycle: ON 400ms / OFF 1600ms
+    // duty cycle: ON 400ms / OFF 1600ms
     if (timeReached(now_ms, g_warn_leak_next_toggle_ms) == true) {
       if (g_warn_leak_on == true) {
         g_warn_leak_on = false;
@@ -152,7 +162,7 @@ static bool leakSamplingAllowed(uint32_t now_ms, Mode m) {
     return g_warn_leak_on;
   }
   if (m == Mode::SAFE) {
-    // in SAFE nur alle 5000ms
+    // in SAFE only every 5s
     if (timeReached(now_ms, g_safe_leak_next_sample_ms) == true) {
       g_safe_leak_next_sample_ms = now_ms + modes::LEAK_PERIOD_SAFE_MS;
       return true;
@@ -166,7 +176,8 @@ static void updateLeakLatched(uint32_t now_ms, const SensorData& s, Mode m) {
   if (leakSamplingAllowed(now_ms, m) == false) {
     return;
   }
-  // update nur wenn sampling erlaubt
+
+  // update if sampling allowed
   g_leak_latched.water_suspect = s.water_suspect;
   g_leak_latched.water_confirm = s.water_confirm;
 }
@@ -217,9 +228,9 @@ static void emitTelemetry(uint32_t now_ms, const SensorData& s) {
         Serial.print(F("AUTH_OK"));
         break;
     }
+
     Serial.print(F(" servoActive="));
     Serial.print(g_actuators.isServoActive() ? 1 : 0);
-
     Serial.println();
 
   #else
@@ -228,7 +239,7 @@ static void emitTelemetry(uint32_t now_ms, const SensorData& s) {
   #endif    
 }
 
-void setup() {
+void setup() { // here .begin()
   #if SATSIM_TELEMETRY
     Serial.begin(115200);
   #endif
@@ -245,7 +256,7 @@ void setup() {
 
    const uint32_t now_ms = millis();
 
-   // Initialize mode & policies
+   // initialise mode and policies
    g_mode = g_modectrl.getMode();
    g_ui_model_cache.mode = g_mode;
 
@@ -253,26 +264,27 @@ void setup() {
 
    resetModeDependentSchedulers(now_ms, g_mode);
 
-   // Start gates
+   // start gates
    g_next_modectrl_ms = now_ms;
    g_next_ui_content_ms = now_ms;
    g_next_telemetry_ms = now_ms;
 }
 
-void loop() {
+void loop() { // .update()
   const uint32_t now_ms = millis();
 
-  // Update always-on subsystems
+  // update always-on subsystems
   g_sensors.update(now_ms);
 
   g_rfid.update(now_ms);
 
   g_keypad.update(now_ms);
 
-  // Route input events into Security (event-driven inputs)
+  // route input events into security (event-driven inputs)
   uint8_t uid[10];
   uint8_t uid_len = 0;
 
+  // still in use?
   if (g_rfid.consumeUid(uid, uid_len) == true) {
     SecurityUiState before = mapSecurityUiState(g_security.state());
     g_security.onRfidUid(uid, uid_len, now_ms);
@@ -291,31 +303,32 @@ void loop() {
 
   g_security.update(now_ms);
 
-  // Security event routing → Servo trigger
+  // security event routing → servo trigger
   if (g_security.consumeAuthSuccessEvent() == true) {
-    //Serial.println(F("[SEC] AUTH SUCCESS event consumed"));
+    //Serial.println(F("[SEC] AUTH SUCCESS event consumed")); // debugging
     g_ui.notifyAuthSuccess(now_ms);
 
     if (g_mode == Mode::NOMINAL) {
       g_actuators.requestServoActive();
     }
   }
-  // Actuators update always (non-blocking FSM)
+  // actuators update always (non-blocking FSM)
   g_actuators.update(now_ms);
 
-  // Supervisor: ModeControl ticking
+  // supervisor: ModeControl ticking
   const SensorData& s = g_sensors.data();
 
   if (timeReached(now_ms, g_next_modectrl_ms) == true) {
     g_next_modectrl_ms = now_ms + modes::MODECTRL_PERIOD_MS;
     g_modectrl.update(now_ms, s);
   }
-  // One-shot mode changed event
+
+  // one-shot mode changed event
   Mode from, to;
   if (g_modectrl.consumeModeChanged(from, to) == true) {
     g_mode = to;
 
-    // Policy reactions
+    // policy reactions
     g_actuators.setServoAllowed(g_mode == Mode::NOMINAL);
 
     g_ui_model_cache.mode = g_mode; // for ModeLight/Buzzer reaction
@@ -325,7 +338,8 @@ void loop() {
     g_mode = g_modectrl.getMode();
     g_ui_model_cache.mode = g_mode;
   }
-  updateLeakLatched(now_ms, s, g_mode); // Leak throttling
+
+  updateLeakLatched(now_ms, s, g_mode); // leak throttling
   
   // UI content update policy (cached model)
   const uint16_t displayPeriod = displayPeriodFor(g_mode);
@@ -336,7 +350,7 @@ void loop() {
 
   g_ui.update(now_ms, g_ui_model_cache);
 
-  // Telemetry policy
+  // telemetry policy
   const uint16_t telemetryPeriod = telemetryPeriodFor(g_mode);
   if (timeReached(now_ms, g_next_telemetry_ms) == true) {
     g_next_telemetry_ms = now_ms + telemetryPeriod;

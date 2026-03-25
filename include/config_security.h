@@ -10,11 +10,11 @@ namespace cfg {
         uint32_t lockout_ms;
         uint8_t max_attempts;
         uint8_t code_len_max;
-        const char* pin_code;
+        const char* pin_code; // pointer to a character, can change pointer but not data pointed to
     };
 
-    // --- RFID Policy ---
-    inline constexpr bool RFID_ALLOW_ANY = true;
+    // rfid olicy
+    inline constexpr bool RFID_ALLOW_ANY = true; // inline: define in header file in comliance with One Definition Rule
 
     struct UidEntry {
         uint8_t len;

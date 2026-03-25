@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-// Typ/Bauplan mit folgenden Werten in den Feldern
+// struct: blueprint with defined storage subfields (members with specific type and storage layout)
 struct SensorData {
     uint16_t solar_data_raw = 0;
     bool pv_low_warn = false;
@@ -13,7 +13,7 @@ struct SensorData {
     bool water_confirm = false;
 };
 
-enum class Mode : uint8_t {
+enum class Mode : uint8_t { // scoped enum with explicit predefined type (uint8_t) for each member
     NOMINAL = 0,
     WARN = 1,
     SAFE = 2,
