@@ -74,3 +74,15 @@ I focused on:
 - Power bank as external supply
 - Breadboard and jumper wires
 
+## What I Learned
+
+This project gave me first-hand exposure on topics such as setting up and integrating Arduino hardware, reading AI-assisted C++ code beyond my skill level and debugging complex embedded systems.
+
+### Embedded Hardware
+
+- Built and tested functional circuits that combined multiple electronic components into a working prototype rather than isolated single-part experiments.
+- Learned how to examine unfamiliar components experimentally. For example, I tested the water-level sensor by connecting it to the Arduino, applying water to the sensing surface, and reading its output values in a short test program to determine whether it behaved as a digital or analog sensor.
+- Developed a better understanding of how different hardware elements interface with a microcontroller, including the distinction between sensor inputs, status/display outputs, and actuator-driven components.
+- Learned to work within the electrical limits of the hardware. Since the Arduino Mega’s analog input pins should only receive voltages within a safe measurement range, I used a 10 kΩ / 10 kΩ voltage divider to scale the PV input voltage before measuring it.
+- Gained practical awareness of power supply considerations when integrating actuators. The micro servo was supplied through a separate 5 V output path from the power bank so that its current draw would be less likely to disturb the Arduino supply during movement.
+- Used the ULN2003 driver as an intermediate driver stage for the buzzer instead of driving it directly from an Arduino pin. This helped reduce the electrical load on the microcontroller output and was a useful introduction to the idea that some components should be driven indirectly rather than connected straight to a GPIO pin.
