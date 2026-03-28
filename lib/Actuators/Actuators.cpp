@@ -109,7 +109,7 @@ void Actuators::requestServoActive() {
 
 void Actuators::startServoActive(uint32_t now_ms) {
     _servo_requested = false;
-    // initialise movement and reset state
+    // initialize movement and reset state
     _servo_active = true;
     _step_index = 0;
 

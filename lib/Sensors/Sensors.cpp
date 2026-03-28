@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 void Sensors::begin() {
-    _next_sample_ms = 0; // initialises when begin() is called
+    _next_sample_ms = 0; // initializes when begin() is called
 
     // first sensor measurements
     _data.solar_data_raw = readAnalogAveraged(pins::PIN_SOLAR, 8);

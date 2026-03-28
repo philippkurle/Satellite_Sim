@@ -8,7 +8,7 @@
 class RfidRc522Reader {
     public:
 
-        // takes constant reference to RfidConfig object, with default initialiser
+        // takes constant reference to RfidConfig object, with default initializer
         explicit RfidRc522Reader(const cfg::RfidConfig& cfg = cfg::RFID_CONFIG); // explicit prevents implicit conversion from constructor parameter type to class type
 
         void begin();
@@ -23,7 +23,7 @@ class RfidRc522Reader {
         MFRC522 _mfrc; // declares instance of MFRC522 class -> interact with hardware through this object
 
         uint32_t _next_poll_ms = 0;
-        uint8_t _uid[10] {}; // initialised with 10x 0
+        uint8_t _uid[10] {}; // initialized with 10x 0
         uint8_t _uid_len = 0;
 
         bool _uid_pending = false;

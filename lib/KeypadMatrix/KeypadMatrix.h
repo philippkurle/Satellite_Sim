@@ -21,7 +21,7 @@ class KeypadMatrix {
         uint8_t _active_col = 0;
 
         // debounce Arrays (ignore false presses caused by electrical noise)
-        bool _raw[cfg::KEYPAD_ROWS][cfg::KEYPAD_COLS] {}; // {} initialisiert mit: bool -> false und uint32_t -> 0 
+        bool _raw[cfg::KEYPAD_ROWS][cfg::KEYPAD_COLS] {}; // {} initializes with: bool -> false and uint32_t -> 0 
         bool _stable[cfg::KEYPAD_ROWS][cfg::KEYPAD_COLS] {};
         uint32_t _changed_at[cfg::KEYPAD_ROWS][cfg::KEYPAD_COLS]{};
 

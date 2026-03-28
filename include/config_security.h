@@ -13,7 +13,7 @@ namespace cfg {
         const char* pin_code; // pointer to a character, can change pointer but not data pointed to
     };
 
-    // rfid olicy
+    // rfid policy
     inline constexpr bool RFID_ALLOW_ANY = true; // inline: define in header file in comliance with One Definition Rule
 
     struct UidEntry {

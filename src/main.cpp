@@ -256,7 +256,7 @@ void setup() { // here .begin()
 
    const uint32_t now_ms = millis();
 
-   // initialise mode and policies
+   // initialize mode and policies
    g_mode = g_modectrl.getMode();
    g_ui_model_cache.mode = g_mode;
 

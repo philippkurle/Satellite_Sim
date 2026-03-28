@@ -70,7 +70,7 @@ class Sensors {
         };
 
 
-        BoolHysteresisHigh _water_suspect_hys; // initialises an object of type BoolHysteresisHigh within class Sensors
+        BoolHysteresisHigh _water_suspect_hys; // initializes an object of type BoolHysteresisHigh within class Sensors
         BoolHysteresisHigh _water_confirm_hys;
 
         BoolHysteresisLow _pv_warn_hys;

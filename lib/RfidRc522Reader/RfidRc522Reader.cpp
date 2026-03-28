@@ -7,7 +7,7 @@ void RfidRc522Reader::begin() {
     pinMode(_cfg.ss_pin, OUTPUT);
 
     SPI.begin();
-    _mfrc.PCD_Init(); // initialises MFRC522 chip
+    _mfrc.PCD_Init(); // initializes MFRC522 chip
     _next_poll_ms = 0;
 }
 
