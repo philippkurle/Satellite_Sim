@@ -124,6 +124,13 @@ This project gave me firsthand exposure to integrating Arduino-based hardware, r
 - If I were to approach the project again with my current knowledge, I would probably focus on only two or three subsystems and try to develop them myself with minimal or no AI support, with the goal of understanding them more deeply from both the implementation and design side. At the same time, I would still choose a project with a broader system context, because working on something larger gave me a much better feel for the complexity, integration effort, and trade-offs involved in projects that are closer to real technical systems.
 - Overall, this project confirmed that I enjoy learning by doing, especially when hardware, software, and system behavior come together in one prototype. It was a strong complement to the more theoretical learning during the semester, and it also showed me how interested I am in continuing to build my programming skills, especially in Python and C++.
 
+## Development Notes
+
+![lcd_bug_2](media/lcd_bug_picture(2).jpeg)
+
+*Example LCD output during development while testing mode display, PV voltage reporting, and UI formatting.*
+
+
 ## Potential Next Steps
 
 - Reimplement one or two selected subsystems with minimal AI support to deepen my understanding of both the implementation and the design decisions behind them.
