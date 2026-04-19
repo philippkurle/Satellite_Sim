@@ -115,7 +115,13 @@ This project gave me firsthand exposure to integrating Arduino-based hardware, r
 - One of the more important debugging issues was the RFID handling. The MFRC522 library calls I was using introduced too much blocking time in the main loop, which made keypad input less responsive. To investigate that, I traced the relevant timeout behavior inside the `miguelbalboa/MFRC522` library, copied the library into the project tree, and reduced the blocking timeout in the local version. This improved how reliably keypad inputs were registered during normal operation.
 - More generally, this part of the project showed me that debugging embedded systems often means looking at both software logic and timing behavior. A problem was not always caused by “wrong code” alone, but sometimes by the way one subsystem affected the responsiveness of the others during runtime.
 
-### Reflection and Known Limitations
+## Development Notes
+
+![lcd_bug_2](media/lcd_bug_picture(2).jpeg)
+
+*Example LCD output during development while testing mode display, PV voltage reporting, and UI formatting.*
+
+## Reflection and Known Limitations
 
 - Looking back, I know that this project was more ambitious than my original skill level realistically supported. I started it without prior experience in C++ or object-oriented programming, so when I began working on the first subsystem in more detail, I quickly realized how much larger the scope was than I had expected.
 - At the same time, I am very glad that I still chose to go through with it. Working on something that was clearly beyond my comfort zone forced me to adapt quickly and pushed me to keep learning throughout the project. One of the most rewarding parts for me was seeing self-assembled hardware come to life and interact as a functioning system.
@@ -123,13 +129,6 @@ This project gave me firsthand exposure to integrating Arduino-based hardware, r
 - One subsystem I eventually chose to remove was a 4-digit display that was originally intended to show PV voltage continuously. I spent a significant amount of time mapping its pins and segments experimentally, testing it safely with resistors, and distinguishing between common-anode and common-cathode behavior. Although I was eventually able to understand the hardware mapping, I was not satisfied with the display quality and stability in the final setup, especially with regard to flicker. Because this part of the project was consuming a disproportionate amount of time, I removed it from the active build and archived that part of the code instead.
 - If I were to approach the project again with my current knowledge, I would probably focus on only two or three subsystems and try to develop them myself with minimal or no AI support, with the goal of understanding them more deeply from both the implementation and design side. At the same time, I would still choose a project with a broader system context, because working on something larger gave me a much better feel for the complexity, integration effort, and trade-offs involved in projects that are closer to real technical systems.
 - Overall, this project confirmed that I enjoy learning by doing, especially when hardware, software, and system behavior come together in one prototype. It was a strong complement to the more theoretical learning during the semester, and it also showed me how interested I am in continuing to build my programming skills, especially in Python and C++.
-
-## Development Notes
-
-![lcd_bug_2](media/lcd_bug_picture(2).jpeg)
-
-*Example LCD output during development while testing mode display, PV voltage reporting, and UI formatting.*
-
 
 ## Potential Next Steps
 
