@@ -2,7 +2,7 @@
 
 This repository documents Satellite_Sim, a simplified satellite subsystem simulator built on an Arduino Mega.
 
-## Demo
+## Demo Video
 
 [![Demo video](media/Satellite_Sim_thumbnail.jpeg)](https://github.com/philippkurle/Satellite_Sim-AI-Supported-Embedded-Systems-Learning-Project/releases/download/satellite-sim-demo-video/Satellite_Sim_Demo_Video.MOV)
 
