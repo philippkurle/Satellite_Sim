@@ -4,7 +4,7 @@ This repository documents Satellite_Sim, a simplified satellite subsystem simula
 
 ## Demo
 
-![Demo video](https://github.com/user-attachments/assets/6d6d2b5c-9e18-45f2-822a-51ad64626c18)
+![Demo video](https://github.com/philippkurle/Satellite_Sim-AI-Supported-Embedded-Systems-Learning-Project/releases/download/satellite-sim-demo-video/Satellite_Sim_Demo_Video.MOV)
 
 ## Context
 
